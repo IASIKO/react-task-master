@@ -10,8 +10,7 @@ const UserProfile = () => {
   const { id } = useParams();
   const [user, setUser] = useState(null);
   const [userFriends, setUserFriends] = useState([]);
-
-  
+  const [breadCrumbs, setBreadCrumbs] = useState([]);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -27,6 +26,7 @@ const UserProfile = () => {
         const data = await response.json();
 
         setUser(data);
+        setBreadCrumbs((prevState) => [...prevState, data]);
         setIsLoading(false);
       } catch (error) {
         setError(error.message);
@@ -36,12 +36,12 @@ const UserProfile = () => {
     fetchUserProfile();
   }, [id, setIsLoading, setError]);
 
-  const fetchUserFriends = async () => {
+  const fetchUserFriends = async (reset = false) => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await fetch(
-        `http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${id}/friends/1/20`
+        `http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${id}/friends/${page}/20`
       );
       if (!response.ok) {
         throw new Error("Something went wrong!");
@@ -58,7 +58,13 @@ const UserProfile = () => {
           imageUrl: userInfo.imageUrl,
         };
       });
-      setUserFriends((prevUsers) => [...prevUsers, ...usersInfo]);
+
+      if (reset) {
+        setUserFriends(usersInfo);
+      }else {
+        setUserFriends((prevUsers) => [...prevUsers, ...usersInfo]);
+      }
+
       setIsLoading(false);
     } catch (error) {
       setError(error.message);
@@ -68,7 +74,10 @@ const UserProfile = () => {
   useEffect(() => {
     fetchUserFriends();
   }, [page]);
-  
+
+  useEffect(() => {
+    fetchUserFriends(true);
+  }, [id]);
 
   return (
     <div className="container">
@@ -125,12 +134,15 @@ const UserProfile = () => {
             </fieldset>
           </div>
           <div className="breadcrumbs">
-            <BreadCrumbs
-              id={user.id}
-              prefix={user.prefix}
-              name={user.name}
-              lastName={user.lastName}
-            />
+            {breadCrumbs.map((item, key) => (
+              <BreadCrumbs
+                key={key}
+                id={item.id}
+                prefix={item.prefix}
+                name={item.name}
+                lastName={item.lastName}
+              />
+            ))}
           </div>
           <h1 className="friends">Friends:</h1>
           <div className="divwrapper">
