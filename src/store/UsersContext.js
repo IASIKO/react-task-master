@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 export const UsersContext = createContext();
 
@@ -8,14 +8,14 @@ const UsersProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [users, setUsers] = useState([]);
-  // const [page, setPage] = useState(1)
+  const [page, setPage] = useState(1)
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await fetch(
-        `http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/1/20`
+        `http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${page}/20`
       );
       if (!response.ok) {
         throw new Error("Something went wrong!");
@@ -32,18 +32,32 @@ const UsersProvider = ({ children }) => {
           imageUrl: userInfo.imageUrl,
         };
       });
-      setUsers(usersInfo);
+      setUsers((prevUsers) => [...prevUsers, ...usersInfo]);
       setIsLoading(false);
     } catch (error) {
       setError(error.message);
     }
     setIsLoading(false);
-  }, [setError, setIsLoading]);
+  }, [setError, setIsLoading, page]);
+
+  const handleScroll = () => {
+    const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+    if (scrollTop + clientHeight >= scrollHeight) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  
+
+  useEffect(()=> {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [])
 
  
   return (
     <UsersContext.Provider
-      value={{ isLoading, setIsLoading, error, setError, fetchUsers, users }}
+      value={{ isLoading, setIsLoading, error, setError, fetchUsers, users, setPage, page }}
     >
       {children}
     </UsersContext.Provider>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./User.css";
 
 const User = (props) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div className="user" onClick={() => navigate(`/user/${props.id}`)}>

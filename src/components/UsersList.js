@@ -5,12 +5,11 @@ import User from "./User";
 import "./UsersList.css";
 
 const UsersList = () => {
-  const { users, fetchUsers, isLoading, error } = useUsersContext();
+  const { users, fetchUsers, isLoading, error, page } = useUsersContext();
 
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
-
+  }, [page]);
   return (
     <div className="container">
       <div className="headerWrapper">

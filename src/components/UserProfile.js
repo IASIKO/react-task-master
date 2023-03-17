@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useUsersContext } from "../store/UsersContext";
-import Friends from "./Friends";
+import BreadCrumbs from "./BreadCrumbs";
+import User from "./User";
 import "./UserProfile.css";
 
 const UserProfile = () => {
-  const { setIsLoading, setError } = useUsersContext();
+  const { setIsLoading, setError, page } = useUsersContext();
   const { id } = useParams();
   const [user, setUser] = useState(null);
-  const [userFriends, setUserFriends] = useState([])
+  const [userFriends, setUserFriends] = useState([]);
+
+  
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -30,40 +33,41 @@ const UserProfile = () => {
       }
     };
 
-    const fetchUserFriends = async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-          const response = await fetch(
-            `http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${id}/friends/1/20`
-          );
-          if (!response.ok) {
-            throw new Error("Something went wrong!");
-          }
-          const data = await response.json();
-
-          const usersInfo = data.list.map((userInfo) => {
-            return {
-              id: userInfo.id,
-              name: userInfo.name,
-              lastName: userInfo.lastName,
-              prefix: userInfo.prefix,
-              title: userInfo.title,
-              imageUrl: userInfo.imageUrl,
-            };
-          });
-    
-          setUserFriends(usersInfo);
-          setIsLoading(false);
-        } catch (error) {
-          setError(error.message);
-        }
-      };
-
     fetchUserProfile();
-    fetchUserFriends()
   }, [id, setIsLoading, setError]);
 
+  const fetchUserFriends = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${id}/friends/1/20`
+      );
+      if (!response.ok) {
+        throw new Error("Something went wrong!");
+      }
+      const data = await response.json();
+
+      const usersInfo = data.list.map((userInfo) => {
+        return {
+          id: userInfo.id,
+          name: userInfo.name,
+          lastName: userInfo.lastName,
+          prefix: userInfo.prefix,
+          title: userInfo.title,
+          imageUrl: userInfo.imageUrl,
+        };
+      });
+      setUserFriends((prevUsers) => [...prevUsers, ...usersInfo]);
+      setIsLoading(false);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserFriends();
+  }, [page]);
   
 
   return (
@@ -121,12 +125,17 @@ const UserProfile = () => {
             </fieldset>
           </div>
           <div className="breadcrumbs">
-            <a href="">breadcrumbs</a>
+            <BreadCrumbs
+              id={user.id}
+              prefix={user.prefix}
+              name={user.name}
+              lastName={user.lastName}
+            />
           </div>
           <h1 className="friends">Friends:</h1>
           <div className="divwrapper">
-          {userFriends.map((user) => (
-              <Friends
+            {userFriends.map((user) => (
+              <User
                 key={user.id}
                 id={user.id}
                 name={user.name}
@@ -136,7 +145,7 @@ const UserProfile = () => {
                 imageUrl={user.imageUrl}
               />
             ))}
-            </div>
+          </div>
         </div>
       )}
     </div>
