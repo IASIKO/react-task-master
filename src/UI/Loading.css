@@ -1,0 +1,31 @@
+.mainLoading {
+    text-align: center;
+}
+
+.loading {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.loading div{
+    display: inline-block;
+    position: absolute;
+    width: 16px;
+    background: #006400;
+    animation: lds-facebook 1.2s cubic-bezier(0,.5,.5,1) infinite;
+}
+
+.loading div:first-child {
+    left: 8px;
+    animation-delay: -.24s;
+}
+
+.loading div:nth-child(2) {
+    left: 32px;
+    animation-delay: -.12s;
+}
+.loading div:nth-child(3) {
+    left: 56px;
+}
