@@ -137,10 +137,12 @@ const UserProfile = () => {
             {breadCrumbs.map((item, key) => (
               <BreadCrumbs
                 key={key}
+                arrowKey={key}
                 id={item.id}
                 prefix={item.prefix}
                 name={item.name}
                 lastName={item.lastName}
+                breadCrumbs={breadCrumbs}
               />
             ))}
           </div>
