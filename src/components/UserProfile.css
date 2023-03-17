@@ -38,7 +38,7 @@
   }
   
   @media only screen and (max-width: 990px) {
-    .left-info {
+    .left {
       margin-left: 0;
       width: auto;
     }

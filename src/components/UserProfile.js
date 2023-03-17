@@ -71,8 +71,8 @@ const UserProfile = () => {
       {user && (
         <div className="headerWrapper">
           <div className="header">
-            <img src={user.imageUrl} alt={user.name} />
-            <fieldset>
+            <img src={`${user.imageUrl}?v=${user.id}`} alt={user.name} />
+            <fieldset className="left">
               <legend>info</legend>
               <div>
                 <strong>
