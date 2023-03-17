@@ -6,7 +6,7 @@ const BreadCrumbs = (props) => {
     <Link
       to={`/user/${props.id}`}
     >{`${props.prefix} ${props.name} ${props.lastName}`}
-    {props.breadCrumbs.length - 1 !== props.arrowKey && ">"}</Link>
+    {props.breadCrumbs.length - 1 !== props.arrowKey && " > "}</Link>
   );
 };
 
